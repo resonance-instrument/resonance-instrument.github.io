@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="zh-CN" data-playing="false" data-muted="false" data-frequency="96" data-reduced-motion="false" data-scene="origin" data-record="empty">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2135bd">
+  <meta name="description" content="RESONANCE 是一件可以被演奏的浏览器共振仪器。移动指针，改变频率，让声音拥有形状。">
+  <title>RESONANCE / 共振地形</title>
+  <link rel="preload" href="assets/fonts/Unbounded-Subset.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/NotoSansSC-Subset.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/AzeretMono-Subset.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到共振仪器</a>
+
+  <header class="site-header">
+    <a class="brand" href="#act-origin">
+      <span class="brand-mark" aria-hidden="true">R</span>
+      <span class="brand-word">RESONANCE</span>
+    </a>
+    <nav class="scene-nav" aria-label="三幕导航">
+      <a href="#act-origin"><span class="nav-index" aria-hidden="true">01</span>起振</a>
+      <a href="#act-frequency"><span class="nav-index" aria-hidden="true">02</span>共振</a>
+      <a href="#act-afterglow"><span class="nav-index" aria-hidden="true">03</span>余振</a>
+    </nav>
+    <div class="header-tools">
+      <button class="header-mute" id="header-mute" type="button" data-mute aria-pressed="false" aria-label="静音">静音</button>
+      <div class="header-status"><span class="status-dot" aria-hidden="true"></span><span id="header-state">静默待机</span></div>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="origin" id="act-origin" aria-labelledby="hero-title">
+      <div class="origin-grid" aria-hidden="true"></div>
+      <p class="origin-kicker">
+        <span class="kicker-act">01 / 起振</span>
+        <span class="kicker-rule" aria-hidden="true"></span>
+        <span class="kicker-copy">让声音拥有形状。</span>
+      </p>
+
+      <h1 class="hero-title" id="hero-title" aria-label="RESONANCE">
+        <span class="title-reso" aria-hidden="true">RESO</span><span class="title-nance" aria-hidden="true">NANCE</span>
+      </h1>
+
+      <div class="instrument" id="instrument">
+        <svg class="instrument-ghost" viewBox="0 0 1344 470" preserveAspectRatio="none" aria-hidden="true">
+          <g class="ghost-rings">
+            <ellipse cx="672" cy="548" rx="322" ry="188"/>
+            <ellipse cx="672" cy="548" rx="474" ry="278"/>
+            <ellipse cx="672" cy="548" rx="626" ry="368"/>
+            <ellipse cx="672" cy="548" rx="778" ry="458"/>
+            <ellipse cx="672" cy="548" rx="930" ry="548"/>
+          </g>
+          <g class="ghost-rules">
+            <path d="M0 108 H1344"/>
+            <path d="M0 214 H1344"/>
+            <path d="M0 320 H1344"/>
+            <path d="M0 426 H1344"/>
+            <path d="M112 0 V470"/>
+            <path d="M1232 0 V470"/>
+          </g>
+        </svg>
+        <canvas id="resonance-canvas" aria-label="随频率与指针变化的三维共振地形" role="img"></canvas>
+        <svg class="instrument-fallback" id="instrument-fallback" viewBox="0 0 1200 600" role="img" aria-label="静态共振地形" preserveAspectRatio="none">
+          <g fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M160 160 L220 145 L280 120 L340 80 L400 105 L460 55 L520 90 L580 35 L640 80 L700 60 L760 110 L820 95 L880 140 L1040 160"/>
+            <path d="M130 205 L210 190 L270 155 L330 125 L390 150 L450 90 L510 135 L570 75 L630 125 L690 95 L750 145 L810 120 L870 170 L930 150 L1070 205"/>
+            <path d="M100 250 L190 235 L250 205 L310 170 L370 205 L430 140 L490 195 L550 125 L610 185 L670 145 L730 200 L790 165 L850 220 L910 195 L1100 250"/>
+            <path d="M70 300 L170 285 L230 255 L290 225 L350 260 L410 195 L470 250 L530 180 L590 240 L650 200 L710 255 L770 220 L830 275 L890 245 L1130 300"/>
+            <path d="M45 355 L150 340 L210 310 L270 280 L330 315 L390 255 L450 310 L510 240 L570 300 L630 260 L690 315 L750 280 L810 335 L870 305 L1155 355"/>
+            <path d="M20 415 L130 400 L190 370 L250 345 L310 380 L370 325 L430 375 L490 310 L550 365 L610 330 L670 380 L730 345 L790 400 L850 370 L1180 415"/>
+            <path d="M0 480 L110 465 L170 440 L230 415 L290 450 L350 400 L410 445 L470 390 L530 440 L590 405 L650 450 L710 420 L770 465 L830 435 L1200 480"/>
+          </g>
+        </svg>
+        <span class="instrument-meta" aria-hidden="true">FIELD 01 / INTERFERENCE SURFACE</span>
+        <div class="instrument-scale" aria-hidden="true">
+          <span>0</span><span>336</span><span>672</span><span>1008</span><span>1344</span>
+        </div>
+        <div class="instrument-probe" aria-hidden="true">
+          <span class="probe-line probe-v"></span>
+          <span class="probe-line probe-h"></span>
+          <span class="probe-node"></span>
+        </div>
+        <div class="instrument-readout">
+          <span>FREQUENCY</span>
+          <strong id="frequency-readout">96 Hz</strong>
+        </div>
+        <span class="axis-label axis-x" aria-hidden="true">POINTER / X</span>
+        <span class="instrument-caption" aria-hidden="true">CONTOUR 0.08 / <span class="traces-desktop">32</span><span class="traces-mobile">24</span> TRACES</span>
+      </div>
+
+      <div class="origin-copy">
+        <p>移动指针或指尖，改变共振。<span class="nowrap">启动声音</span>，观察一次振动如何穿过空间。</p>
+        <div class="origin-actions">
+          <button class="button button-primary" id="start-button" type="button">启动共振</button>
+          <a class="text-link" href="#act-frequency">选择频率</a>
+        </div>
+        <p class="audio-note" id="audio-status" role="status" aria-live="polite">声音默认关闭，由你决定何时开始。</p>
+      </div>
+
+      <dl class="origin-parameters" aria-label="仪器参数">
+        <div><dt>AMP</dt><dd id="amplitude-readout">0.62</dd></div>
+        <div><dt>PHASE</dt><dd id="phase-readout">0.00</dd></div>
+        <div><dt>TENSION</dt><dd id="tension-readout">0.00</dd></div>
+        <div><dt>MODE</dt><dd id="mode-readout">IDLE</dd></div>
+      </dl>
+
+      <div class="origin-footer">
+        <span>一件可演奏的浏览器仪器</span>
+        <a href="#act-frequency">向下调频 <span aria-hidden="true">↓</span></a>
+      </div>
+    </section>
+
+    <section class="spectrum" id="act-frequency" aria-labelledby="spectrum-title">
+      <p class="act-rail" aria-hidden="true">02 / 共振 &nbsp; SPECTRUM</p>
+      <div class="spectrum-heading">
+        <h2 id="spectrum-title">三种频率，<span>三种空间反应。</span></h2>
+        <div class="spectrum-intro">
+          <p>低频拉开形状，中频形成稳定干涉，高频让边缘<span class="nowrap">变得锋利</span>。选择一条频率乐谱，整台仪器会一起改变。</p>
+          <p class="spectrum-facts" aria-hidden="true"><span>3 CHANNELS</span><span>42—180 HZ</span></p>
+        </div>
+      </div>
+
+      <div class="frequency-axis" aria-hidden="true">
+        <span class="axis-tick" style="--at: 0%"><b>0</b></span>
+        <span class="axis-tick" style="--at: 21%"><b>42</b></span>
+        <span class="axis-tick" style="--at: 48%"><b>96</b></span>
+        <span class="axis-tick" style="--at: 90%"><b>180</b></span>
+        <span class="axis-tick" style="--at: 100%"><b>200</b></span>
+        <span class="axis-marker"><b id="axis-frequency">096</b></span>
+      </div>
+
+      <div class="frequency-score" role="group" aria-label="选择共振频率">
+        <button class="frequency-row frequency-low" type="button" data-frequency="42" aria-pressed="false">
+          <span class="frequency-leading">
+            <span class="frequency-channel" aria-hidden="true">CHANNEL 01</span>
+            <span class="frequency-value">42<small>Hz</small></span>
+            <span class="frequency-meta" aria-hidden="true"><span>WAVE 8.17 m</span><span>PERIOD 23.8 ms</span></span>
+          </span>
+          <span class="frequency-description"><strong>低频 / 扩张</strong><span>长波缓慢铺开，把边缘推远。</span></span>
+          <span class="frequency-wave-cell" aria-hidden="true">
+            <svg class="frequency-wave" viewBox="0 0 360 80" preserveAspectRatio="none">
+              <g class="frequency-contours">
+                <path class="contour-detail" d="M0 40 L5 40.2 L10 40.6 L15 41.2 L20 41.8 L25 42.4 L30 43.1 L35 43.8 L40 44.4 L45 45 L50 45.5 L55 45.9 L60 46.1 L65 46.3 L70 46.3 L75 46.1 L80 45.8 L85 45.3 L90 44.7 L95 44 L100 43.2 L105 42.2 L110 41.2 L115 40.1 L120 39 L125 37.8 L130 36.7 L135 35.6 L140 34.6 L145 33.7 L150 32.9 L155 32.2 L160 31.6 L165 31.3 L170 31.1 L175 31 L180 31.2 L185 31.5 L190 32 L195 32.6 L200 33.4 L205 34.3 L210 35.3 L215 36.3 L220 37.5 L225 38.7 L230 39.8 L235 41 L240 42.1 L245 43.1 L250 44 L255 44.9 L260 45.6 L265 46.1 L270 46.5 L275 46.8 L280 46.9 L285 46.8 L290 46.6 L295 46.3 L300 45.8 L305 45.3 L310 44.7 L315 44 L320 43.3 L325 42.5 L330 41.8 L335 41.2 L340 40.6 L345 40.1 L350 39.8 L355 39.6 L360 40" opacity="0.2"/>
+                <path d="M0 40 L5 40.4 L10 41.3 L15 42.4 L20 43.6 L25 45 L30 46.4 L35 47.7 L40 49 L45 50.1 L50 51 L55 51.8 L60 52.2 L65 52.4 L70 52.3 L75 51.9 L80 51.1 L85 50.1 L90 48.7 L95 47.1 L100 45.3 L105 43.3 L110 41.1 L115 38.9 L120 36.5 L125 34.2 L130 32 L135 29.9 L140 27.9 L145 26.2 L150 24.7 L155 23.5 L160 22.7 L165 22.2 L170 22 L175 22.3 L180 22.9 L185 23.8 L190 25.1 L195 26.7 L200 28.5 L205 30.6 L210 32.8 L215 35.2 L220 37.6 L225 40 L230 42.4 L235 44.6 L240 46.8 L245 48.7 L250 50.4 L255 51.8 L260 52.9 L265 53.7 L270 54.1 L275 54.3 L280 54.1 L285 53.6 L290 52.9 L295 51.9 L300 50.6 L305 49.3 L310 47.8 L315 46.2 L320 44.7 L325 43.2 L330 41.8 L335 40.5 L340 39.5 L345 38.8 L350 38.4 L355 38.5 L360 40" opacity="0.42"/>
+                <path class="wave-main" d="M0 40 L5 40.8 L10 42.2 L15 44.1 L20 46.3 L25 48.6 L30 50.9 L35 53.2 L40 55.2 L45 57.1 L50 58.5 L55 59.6 L60 60.2 L65 60.3 L70 59.8 L75 58.8 L80 57.3 L85 55.2 L90 52.6 L95 49.6 L100 46.3 L105 42.6 L110 38.8 L115 34.8 L120 30.9 L125 27 L130 23.4 L135 20 L140 17 L145 14.5 L150 12.5 L155 11.1 L160 10.3 L165 10.2 L170 10.7 L175 11.9 L180 13.7 L185 16.1 L190 19 L195 22.3 L200 26 L205 30 L210 34.2 L215 38.4 L220 42.6 L225 46.7 L230 50.6 L235 54.1 L240 57.2 L245 59.9 L250 62 L255 63.6 L260 64.6 L265 65 L270 64.8 L275 64 L280 62.7 L285 61 L290 58.9 L295 56.4 L300 53.7 L305 50.9 L310 48 L315 45.2 L320 42.5 L325 40.1 L330 38.1 L335 36.4 L340 35.3 L345 34.7 L350 34.9 L355 35.9 L360 40" opacity="0.95"/>
+                <path d="M0 40 L5 40.5 L10 41.5 L15 42.8 L20 44.3 L25 45.9 L30 47.5 L35 49.1 L40 50.5 L45 51.8 L50 52.9 L55 53.7 L60 54.2 L65 54.4 L70 54.2 L75 53.6 L80 52.7 L85 51.4 L90 49.8 L95 47.8 L100 45.6 L105 43.2 L110 40.6 L115 37.9 L120 35.2 L125 32.5 L130 29.9 L135 27.4 L140 25.2 L145 23.3 L150 21.6 L155 20.4 L160 19.5 L165 19.1 L170 19.1 L175 19.6 L180 20.5 L185 21.8 L190 23.4 L195 25.5 L200 27.8 L205 30.3 L210 33 L215 35.9 L220 38.7 L225 41.6 L230 44.3 L235 46.9 L240 49.3 L245 51.5 L250 53.3 L255 54.8 L260 55.9 L265 56.6 L270 56.9 L275 56.9 L280 56.4 L285 55.7 L290 54.6 L295 53.2 L300 51.6 L305 49.9 L310 48 L315 46.1 L320 44.3 L325 42.5 L330 40.9 L335 39.6 L340 38.5 L345 37.8 L350 37.5 L355 37.8 L360 40" opacity="0.42"/>
+                <path class="contour-detail" d="M0 40 L5 40.3 L10 40.9 L15 41.7 L20 42.6 L25 43.6 L30 44.6 L35 45.5 L40 46.4 L45 47.3 L50 47.9 L55 48.5 L60 48.8 L65 49 L70 49 L75 48.7 L80 48.2 L85 47.5 L90 46.6 L95 45.5 L100 44.2 L105 42.8 L110 41.3 L115 39.6 L120 38 L125 36.3 L130 34.7 L135 33.2 L140 31.7 L145 30.4 L150 29.3 L155 28.4 L160 27.7 L165 27.2 L170 27 L175 27.1 L180 27.4 L185 28 L190 28.8 L195 29.8 L200 31 L205 32.4 L210 34 L215 35.6 L220 37.3 L225 39 L230 40.7 L235 42.4 L240 44 L245 45.4 L250 46.7 L255 47.8 L260 48.7 L265 49.4 L270 49.9 L275 50.1 L280 50.1 L285 49.9 L290 49.5 L295 48.9 L300 48.1 L305 47.2 L310 46.2 L315 45.2 L320 44.1 L325 43 L330 42 L335 41 L340 40.2 L345 39.6 L350 39.2 L355 39.2 L360 40" opacity="0.2"/>
+              </g>
+            </svg>
+            <span class="wave-scale"><i>0</i><i>0.25</i><i>0.5</i><i>1.0</i></span>
+          </span>
+          <span class="frequency-select" aria-hidden="true"><span class="select-idle">选择 ↗</span><span class="select-current">当前通道</span></span>
+        </button>
+        <button class="frequency-row frequency-mid" type="button" data-frequency="96" aria-pressed="true">
+          <span class="frequency-leading">
+            <span class="frequency-channel" aria-hidden="true">CHANNEL 02</span>
+            <span class="frequency-value">96<small>Hz</small></span>
+            <span class="frequency-meta" aria-hidden="true"><span>WAVE 3.57 m</span><span>PERIOD 10.4 ms</span></span>
+          </span>
+          <span class="frequency-description"><strong>中频 / 干涉</strong><span>波峰交错，秩序从重叠中浮现。</span></span>
+          <span class="frequency-wave-cell" aria-hidden="true">
+            <svg class="frequency-wave" viewBox="0 0 360 80" preserveAspectRatio="none">
+              <g class="frequency-contours">
+                <path class="contour-detail" d="M0 40 L5 40.4 L10 41.3 L15 42.2 L20 43 L25 43.4 L30 43.3 L35 42.6 L40 41.4 L45 39.8 L50 38.1 L55 36.4 L60 35.1 L65 34.4 L70 34.4 L75 35.2 L80 36.7 L85 38.7 L90 40.9 L95 43.1 L100 45 L105 46.2 L110 46.7 L115 46.3 L120 45.1 L125 43.1 L130 40.8 L135 38.4 L140 36.1 L145 34.4 L150 33.4 L155 33.3 L160 34 L165 35.5 L170 37.5 L175 39.8 L180 42.1 L185 44 L190 45.3 L195 46 L200 45.8 L205 45 L210 43.5 L215 41.7 L220 39.8 L225 38 L230 36.6 L235 35.7 L240 35.3 L245 35.6 L250 36.4 L255 37.5 L260 38.9 L265 40.2 L270 41.4 L275 42.3 L280 42.9 L285 43 L290 42.8 L295 42.2 L300 41.5 L305 40.8 L310 40 L315 39.4 L320 38.9 L325 38.7 L330 38.7 L335 38.8 L340 39 L345 39.3 L350 39.6 L355 39.9 L360 40" opacity="0.2"/>
+                <path d="M0 40 L5 40.8 L10 42.6 L15 44.5 L20 46 L25 46.8 L30 46.5 L35 45.1 L40 42.6 L45 39.3 L50 35.8 L55 32.6 L60 30.1 L65 28.8 L70 29 L75 30.8 L80 33.9 L85 38.1 L90 42.6 L95 47 L100 50.6 L105 52.8 L110 53.3 L115 52.1 L120 49.3 L125 45.1 L130 40.3 L135 35.4 L140 31.2 L145 28.1 L150 26.6 L155 26.9 L160 28.9 L165 32.3 L170 36.6 L175 41.3 L180 45.6 L185 49.2 L190 51.4 L195 52 L200 51.1 L205 48.9 L210 45.6 L215 41.8 L220 37.9 L225 34.6 L230 32.1 L235 30.8 L240 30.7 L245 31.8 L250 33.8 L255 36.4 L260 39.2 L265 41.8 L270 44 L275 45.4 L280 46.1 L285 45.9 L290 45.1 L295 43.8 L300 42.2 L305 40.6 L310 39.2 L315 38.1 L320 37.4 L325 37.2 L330 37.3 L335 37.7 L340 38.3 L345 39 L350 39.5 L355 39.9 L360 40" opacity="0.42"/>
+                <path class="wave-main" d="M0 40 L5 41.5 L10 44.5 L15 47.9 L20 50.5 L25 51.8 L30 51.1 L35 48.4 L40 43.9 L45 38.1 L50 31.9 L55 26.3 L60 22.2 L65 20.4 L70 21.4 L75 25.1 L80 31.1 L85 38.6 L90 46.7 L95 54.1 L100 59.8 L105 62.9 L110 62.9 L115 59.7 L120 53.7 L125 45.9 L130 37.2 L135 28.8 L140 22 L145 17.7 L150 16.4 L155 18.4 L160 23.1 L165 30.1 L170 38.2 L175 46.4 L180 53.4 L185 58.5 L190 60.9 L195 60.5 L200 57.4 L205 52.2 L210 45.6 L215 38.7 L220 32.3 L225 27.3 L230 24.3 L235 23.5 L240 24.8 L245 28 L250 32.4 L255 37.4 L260 42.3 L265 46.4 L270 49.3 L275 50.7 L280 50.7 L285 49.4 L290 47.2 L295 44.3 L300 41.4 L305 38.7 L310 36.6 L315 35.3 L320 34.7 L325 34.9 L330 35.6 L335 36.7 L340 37.9 L345 39 L350 39.9 L355 40.4 L360 40" opacity="0.95"/>
+                <path d="M0 40 L5 41.1 L10 43.4 L15 45.9 L20 47.9 L25 48.9 L30 48.5 L35 46.5 L40 43.2 L45 38.9 L50 34.3 L55 30.1 L60 26.9 L65 25.3 L70 25.7 L75 28.2 L80 32.5 L85 38 L90 44 L95 49.7 L100 54.2 L105 56.9 L110 57.4 L115 55.5 L120 51.5 L125 46 L130 39.6 L135 33.2 L140 27.7 L145 23.9 L150 22.3 L155 23 L160 26 L165 30.7 L170 36.6 L175 42.7 L180 48.3 L185 52.7 L190 55.2 L195 55.7 L200 54.2 L205 50.9 L210 46.3 L215 41.2 L220 36.2 L225 32 L230 29.1 L235 27.8 L240 28 L245 29.8 L250 32.6 L255 36.2 L260 39.9 L265 43.2 L270 45.9 L275 47.5 L280 48.1 L285 47.6 L290 46.3 L295 44.4 L300 42.3 L305 40.2 L310 38.4 L315 37.1 L320 36.4 L325 36.2 L330 36.5 L335 37.1 L340 38 L345 38.8 L350 39.6 L355 40.1 L360 40" opacity="0.42"/>
+                <path class="contour-detail" d="M0 40 L5 40.7 L10 42.1 L15 43.6 L20 44.9 L25 45.5 L30 45.3 L35 44.2 L40 42.2 L45 39.6 L50 36.8 L55 34.1 L60 32 L65 30.9 L70 31 L75 32.4 L80 34.8 L85 38.1 L90 41.8 L95 45.4 L100 48.4 L105 50.3 L110 50.9 L115 50 L120 47.9 L125 44.6 L130 40.8 L135 36.8 L140 33.2 L145 30.6 L150 29.2 L155 29.2 L160 30.6 L165 33.2 L170 36.6 L175 40.4 L180 44 L185 47 L190 49 L195 49.8 L200 49.3 L205 47.7 L210 45.1 L215 42.1 L220 39 L225 36.2 L230 34 L235 32.7 L240 32.4 L245 33.1 L250 34.5 L255 36.5 L260 38.8 L265 40.9 L270 42.8 L275 44.1 L280 44.8 L285 44.9 L290 44.3 L295 43.4 L300 42.2 L305 40.9 L310 39.7 L315 38.7 L320 38.1 L325 37.8 L330 37.8 L335 38.1 L340 38.5 L345 39 L350 39.5 L355 39.9 L360 40" opacity="0.2"/>
+              </g>
+            </svg>
+            <span class="wave-scale"><i>0</i><i>0.25</i><i>0.5</i><i>1.0</i></span>
+          </span>
+          <span class="frequency-select" aria-hidden="true"><span class="select-idle">选择 ↗</span><span class="select-current">当前通道</span></span>
+        </button>
+        <button class="frequency-row frequency-high" type="button" data-frequency="180" aria-pressed="false">
+          <span class="frequency-leading">
+            <span class="frequency-channel" aria-hidden="true">CHANNEL 03</span>
+            <span class="frequency-value">180<small>Hz</small></span>
+            <span class="frequency-meta" aria-hidden="true"><span>WAVE 1.91 m</span><span>PERIOD 5.56 ms</span></span>
+          </span>
+          <span class="frequency-description"><strong>高频 / 锐化</strong><span>短波收紧，轮廓露出细密的齿。</span></span>
+          <span class="frequency-wave-cell" aria-hidden="true">
+            <svg class="frequency-wave" viewBox="0 0 360 80" preserveAspectRatio="none">
+              <g class="frequency-contours">
+                <path class="contour-detail" d="M0 40 L2.5 40.5 L5 41.3 L7.5 42.2 L10 43.3 L12.5 42.9 L15 42.2 L17.5 41.3 L20 40.3 L22.5 39.2 L25 38 L27.5 36.8 L30 35.5 L32.5 35.6 L35 36.8 L37.5 38 L40 39.3 L42.5 40.6 L45 42 L47.5 43.4 L50 44.9 L52.5 45.6 L55 44.2 L57.5 42.7 L60 41.3 L62.5 39.7 L65 38.2 L67.5 36.6 L70 35 L72.5 33.4 L75 35 L77.5 36.5 L80 38.2 L82.5 39.8 L85 41.5 L87.5 43.2 L90 45 L92.5 46.7 L95 45.9 L97.5 44.2 L100 42.4 L102.5 40.7 L105 38.9 L107.5 37.1 L110 35.3 L112.5 33.4 L115 33.3 L117.5 35.1 L120 37 L122.5 38.8 L125 40.6 L127.5 42.5 L130 44.4 L132.5 46.3 L135 47.4 L137.5 45.5 L140 43.7 L142.5 41.8 L145 39.9 L147.5 38 L150 36 L152.5 34.1 L155 32.2 L157.5 33.8 L160 35.8 L162.5 37.7 L165 39.6 L167.5 41.5 L170 43.5 L172.5 45.4 L175 47.3 L177.5 46.7 L180 44.8 L182.5 42.9 L185 40.9 L187.5 39 L190 37.1 L192.5 35.1 L195 33.2 L197.5 32.8 L200 34.7 L202.5 36.6 L205 38.5 L207.5 40.5 L210 42.4 L212.5 44.3 L215 46.2 L217.5 47.7 L220 45.7 L222.5 43.8 L225 41.9 L227.5 40.1 L230 38.2 L232.5 36.3 L235 34.5 L237.5 32.7 L240 33.9 L242.5 35.8 L245 37.6 L247.5 39.4 L250 41.2 L252.5 43 L255 44.8 L257.5 46.5 L260 46.3 L262.5 44.5 L265 42.8 L267.5 41 L270 39.3 L272.5 37.6 L275 35.9 L277.5 34.3 L280 33.6 L282.5 35.3 L285 37 L287.5 38.6 L290 40.2 L292.5 41.8 L295 43.3 L297.5 44.8 L300 46.3 L302.5 44.7 L305 43.2 L307.5 41.7 L310 40.2 L312.5 38.8 L315 37.4 L317.5 36.1 L320 34.9 L322.5 35.6 L325 36.9 L327.5 38.2 L330 39.5 L332.5 40.7 L335 41.8 L337.5 42.8 L340 43.8 L342.5 43.7 L345 42.5 L347.5 41.5 L350 40.6 L352.5 39.8 L355 39.2 L357.5 38.8 L360 40" opacity="0.2"/>
+                <path d="M0 40 L2.5 41.2 L5 43 L7.5 45.2 L10 47.6 L12.5 46.3 L15 44.5 L17.5 42.4 L20 40.1 L22.5 37.6 L25 34.9 L27.5 32 L30 29 L32.5 31.1 L35 33.9 L37.5 36.7 L40 39.7 L42.5 42.9 L45 46.1 L47.5 49.5 L50 52.9 L52.5 50.5 L55 47.3 L57.5 43.9 L60 40.5 L62.5 36.9 L65 33.3 L67.5 29.6 L70 25.8 L72.5 28.2 L75 31.8 L77.5 35.5 L80 39.3 L82.5 43.2 L85 47.1 L87.5 51.1 L90 55.1 L92.5 52.9 L95 48.9 L97.5 45 L100 40.9 L102.5 36.8 L105 32.7 L107.5 28.5 L110 24.2 L112.5 26.3 L115 30.4 L117.5 34.6 L120 38.9 L122.5 43.1 L125 47.4 L127.5 51.8 L130 56.1 L132.5 54.4 L135 50.1 L137.5 45.7 L140 41.4 L142.5 37 L145 32.6 L147.5 28.1 L150 23.7 L152.5 25.1 L155 29.5 L157.5 34 L160 38.4 L162.5 42.9 L165 47.3 L167.5 51.8 L170 56.3 L172.5 55.2 L175 50.7 L177.5 46.3 L180 41.8 L182.5 37.3 L185 32.9 L187.5 28.4 L190 23.9 L192.5 24.6 L195 29.1 L197.5 33.6 L200 38 L202.5 42.5 L205 46.9 L207.5 51.3 L210 55.7 L212.5 55.4 L215 51 L217.5 46.5 L220 42.2 L222.5 37.8 L225 33.4 L227.5 29.1 L230 24.8 L232.5 24.8 L235 29.1 L237.5 33.4 L240 37.7 L242.5 42 L245 46.2 L247.5 50.3 L250 54.5 L252.5 54.9 L255 50.7 L257.5 46.5 L260 42.4 L262.5 38.3 L265 34.3 L267.5 30.3 L270 26.4 L272.5 25.7 L275 29.8 L277.5 33.7 L280 37.6 L282.5 41.4 L285 45.2 L287.5 48.8 L290 52.4 L292.5 53.4 L295 49.6 L297.5 45.9 L300 42.4 L302.5 38.9 L305 35.5 L307.5 32.2 L310 29 L312.5 27.9 L315 31.3 L317.5 34.6 L320 37.8 L322.5 40.9 L325 43.8 L327.5 46.5 L330 49.2 L332.5 50.2 L335 47.2 L337.5 44.4 L340 41.8 L342.5 39.4 L345 37.3 L347.5 35.4 L350 33.8 L352.5 33.4 L355 35.8 L357.5 37.9 L360 40" opacity="0.42"/>
+                <path class="wave-main" d="M0 40 L2.5 41.9 L5 45 L7.5 48.6 L10 52.1 L12.5 49.6 L15 46.6 L17.5 43.2 L20 39.3 L22.5 35.1 L25 30.6 L27.5 25.8 L30 23.1 L32.5 27.4 L35 32 L37.5 36.8 L40 41.8 L42.5 47 L45 52.4 L47.5 58 L50 59.1 L52.5 53.8 L55 48.4 L57.5 42.7 L60 37 L62.5 31 L65 25 L67.5 18.8 L70 19.8 L72.5 25.8 L75 31.9 L77.5 38.1 L80 44.4 L82.5 50.9 L85 57.4 L87.5 64.1 L90 60.5 L92.5 54.1 L95 47.5 L97.5 40.9 L100 34.1 L102.5 27.3 L105 20.4 L107.5 13.4 L110 19.6 L112.5 26.4 L115 33.3 L117.5 40.3 L120 47.4 L122.5 54.5 L125 61.6 L127.5 67 L130 59.9 L132.5 52.8 L135 45.6 L137.5 38.4 L140 31.2 L142.5 23.9 L145 16.5 L147.5 13.6 L150 20.9 L152.5 28.2 L155 35.5 L157.5 42.9 L160 50.3 L162.5 57.6 L165 65.1 L167.5 65.4 L170 58 L172.5 50.6 L175 43.2 L177.5 35.8 L180 28.4 L182.5 21 L185 13.6 L187.5 15.9 L190 23.3 L192.5 30.7 L195 38.1 L197.5 45.5 L200 52.8 L202.5 60.2 L205 67.5 L207.5 62.6 L210 55.3 L212.5 47.9 L215 40.6 L217.5 33.4 L220 26.1 L222.5 18.9 L225 11.8 L227.5 19.1 L230 26.3 L232.5 33.5 L235 40.6 L237.5 47.7 L240 54.7 L242.5 61.7 L245 66.1 L247.5 59 L250 52 L252.5 45.1 L255 38.2 L257.5 31.4 L260 24.7 L262.5 18.1 L265 16.3 L267.5 23 L270 29.7 L272.5 36.3 L275 42.8 L277.5 49.2 L280 55.5 L282.5 61.6 L285 61.1 L287.5 54.7 L290 48.5 L292.5 42.4 L295 36.4 L297.5 30.5 L300 24.8 L302.5 19.3 L305 21.8 L307.5 27.6 L310 33.3 L312.5 38.8 L315 44.1 L317.5 49.3 L320 54.2 L322.5 58.8 L325 54.8 L327.5 49.7 L330 44.8 L332.5 40.2 L335 35.9 L337.5 31.8 L340 28.1 L342.5 25.2 L345 29.6 L347.5 33.6 L350 37.3 L352.5 40.4 L355 42.8 L357.5 44.1 L360 40" opacity="0.95"/>
+                <path d="M0 40 L2.5 41.3 L5 43.4 L7.5 45.8 L10 48.5 L12.5 46.8 L15 44.8 L17.5 42.5 L20 39.9 L22.5 37 L25 34 L27.5 30.7 L30 27.7 L32.5 30.6 L35 33.7 L37.5 36.9 L40 40.3 L42.5 43.8 L45 47.5 L47.5 51.3 L50 54.4 L52.5 50.8 L55 47.2 L57.5 43.4 L60 39.5 L62.5 35.5 L65 31.4 L67.5 27.2 L70 24.2 L72.5 28.2 L75 32.3 L77.5 36.5 L80 40.8 L82.5 45.1 L85 49.5 L87.5 54 L90 56.8 L92.5 52.5 L95 48 L97.5 43.5 L100 39 L102.5 34.4 L105 29.7 L107.5 25 L110 22.5 L112.5 27.1 L115 31.8 L117.5 36.5 L120 41.3 L122.5 46.1 L125 50.9 L127.5 55.8 L130 57.9 L132.5 53.1 L135 48.3 L137.5 43.4 L140 38.5 L142.5 33.5 L145 28.6 L147.5 23.6 L150 21.9 L152.5 26.8 L155 31.8 L157.5 36.8 L160 41.8 L162.5 46.8 L165 51.8 L167.5 56.8 L170 58.1 L172.5 53.1 L175 48.1 L177.5 43 L180 38 L182.5 33 L185 27.9 L187.5 22.9 L190 22.1 L192.5 27.2 L195 32.2 L197.5 37.2 L200 42.2 L202.5 47.2 L205 52.2 L207.5 57.1 L210 57.5 L212.5 52.5 L215 47.5 L217.5 42.5 L220 37.6 L222.5 32.7 L225 27.8 L227.5 23 L230 23.1 L232.5 28 L235 32.9 L237.5 37.7 L240 42.5 L242.5 47.3 L245 52 L247.5 56.6 L250 56.1 L252.5 51.3 L255 46.6 L257.5 42 L260 37.4 L262.5 32.8 L265 28.4 L267.5 24 L270 24.9 L272.5 29.5 L275 33.9 L277.5 38.3 L280 42.7 L282.5 46.9 L285 51.1 L287.5 55.1 L290 53.8 L292.5 49.6 L295 45.4 L297.5 41.3 L300 37.4 L302.5 33.5 L305 29.8 L307.5 26.2 L310 27.8 L312.5 31.6 L315 35.4 L317.5 39 L320 42.4 L322.5 45.8 L325 48.9 L327.5 51.9 L330 50.2 L332.5 46.8 L335 43.7 L337.5 40.7 L340 38 L342.5 35.4 L345 33.2 L347.5 31.3 L350 33.1 L352.5 35.7 L355 38 L357.5 39.7 L360 40" opacity="0.42"/>
+                <path class="contour-detail" d="M0 40 L2.5 40.7 L5 41.8 L7.5 43.1 L10 44.6 L12.5 43.9 L15 42.8 L17.5 41.6 L20 40.2 L22.5 38.7 L25 37 L27.5 35.3 L30 33.5 L32.5 34.3 L35 36 L37.5 37.7 L40 39.5 L42.5 41.4 L45 43.3 L47.5 45.4 L50 47.5 L52.5 46.9 L55 45 L57.5 42.9 L60 40.9 L62.5 38.7 L65 36.5 L67.5 34.3 L70 32 L72.5 32 L75 34.2 L77.5 36.5 L80 38.7 L82.5 41.1 L85 43.4 L87.5 45.8 L90 48.3 L92.5 48.9 L95 46.5 L97.5 44.1 L100 41.7 L102.5 39.2 L105 36.7 L107.5 34.2 L110 31.6 L112.5 30.3 L115 32.8 L117.5 35.4 L120 37.9 L122.5 40.5 L125 43.1 L127.5 45.7 L130 48.3 L132.5 50.4 L135 47.8 L137.5 45.1 L140 42.5 L142.5 39.9 L145 37.2 L147.5 34.5 L150 31.8 L152.5 29.2 L155 31.7 L157.5 34.4 L160 37.1 L162.5 39.8 L165 42.5 L167.5 45.2 L170 47.9 L172.5 50.6 L175 48.7 L177.5 46 L180 43.3 L182.5 40.6 L185 37.9 L187.5 35.2 L190 32.5 L192.5 29.8 L195 31 L197.5 33.7 L200 36.4 L202.5 39 L205 41.7 L207.5 44.4 L210 47.1 L212.5 49.7 L215 49.3 L217.5 46.6 L220 43.9 L222.5 41.3 L225 38.7 L227.5 36 L230 33.4 L232.5 30.9 L235 30.6 L237.5 33.2 L240 35.8 L242.5 38.4 L245 40.9 L247.5 43.5 L250 46 L252.5 48.5 L255 49.4 L257.5 46.8 L260 44.3 L262.5 41.9 L265 39.4 L267.5 37 L270 34.6 L272.5 32.3 L275 30.8 L277.5 33.2 L280 35.6 L282.5 37.9 L285 40.2 L287.5 42.5 L290 44.7 L292.5 46.8 L295 48.8 L297.5 46.5 L300 44.3 L302.5 42.2 L305 40.1 L307.5 38 L310 36.1 L312.5 34.2 L315 32.3 L317.5 34 L320 36 L322.5 37.9 L325 39.7 L327.5 41.4 L330 43.1 L332.5 44.6 L335 46.1 L337.5 45 L340 43.4 L342.5 41.8 L345 40.4 L347.5 39.1 L350 38 L352.5 37.2 L355 36.7 L357.5 37.6 L360 40" opacity="0.2"/>
+              </g>
+            </svg>
+            <span class="wave-scale"><i>0</i><i>0.25</i><i>0.5</i><i>1.0</i></span>
+          </span>
+          <span class="frequency-select" aria-hidden="true"><span class="select-idle">选择 ↗</span><span class="select-current">当前通道</span></span>
+        </button>
+      </div>
+
+      <div class="spectrum-preview" aria-hidden="true">
+        <span class="spectrum-preview-label">PREVIEW / 选择频率时，地形即时随之改变</span>
+        <canvas id="preview-canvas"></canvas>
+      </div>
+
+      <div class="spectrum-controls">
+        <p>当前选择 <strong id="spectrum-readout">96 Hz</strong></p>
+        <div class="scene-console">
+          <span class="scene-state" data-scene-state>静默待机</span>
+          <button class="button button-quiet" id="mute-button" type="button" data-mute aria-pressed="false" aria-label="静音">静音</button>
+          <button class="button button-dark" data-scene-toggle type="button" aria-busy="false">启动共振</button>
+        </div>
+      </div>
+      <p class="scene-message" data-scene-message></p>
+    </section>
+
+    <section class="afterglow" id="act-afterglow" aria-labelledby="afterglow-title">
+      <p class="act-rail act-rail-dark" aria-hidden="true">03 / 余振 &nbsp; AFTERGLOW</p>
+      <div class="afterglow-topline">
+        <span>AFTER THE VIBRATION</span>
+        <span class="afterglow-record">DECAY RECORD <b id="afterglow-frequency">096 / Hz</b></span>
+      </div>
+      <h2 id="afterglow-title">当振动停止，<span>形状仍短暂停留。</span></h2>
+      <p class="residual-explain" id="residual-explain-note">这里还没有记录。<span class="nowrap">起振一次</span>，声音停下后的四秒会写在这条轴上，<span class="nowrap">纵轴</span>是它残留的振幅；虚线是它将占满的范围。</p>
+      <div class="residual-meta" aria-hidden="true">
+        <span id="residual-residue">RESIDUE / 4%</span>
+        <span id="residual-traces">TRACES / 03</span>
+        <span id="residual-decay">DECAY / 3.2</span>
+      </div>
+      <div class="residual-line" tabindex="0" role="group" aria-label="衰减记录" aria-describedby="residual-explain-note">
+        <svg viewBox="0 0 1200 180" preserveAspectRatio="none">
+          <g class="residual-grid">
+            <line x1="0" y1="90" x2="1200" y2="90"/>
+            <line x1="0" y1="18" x2="1200" y2="18"/>
+            <line x1="0" y1="162" x2="1200" y2="162"/>
+            <!-- Verticals at one second each: the window is four seconds wide. -->
+            <line x1="0" y1="10" x2="0" y2="170"/>
+            <line x1="300" y1="10" x2="300" y2="170"/>
+            <line x1="600" y1="10" x2="600" y2="170"/>
+            <line x1="900" y1="10" x2="900" y2="170"/>
+            <line x1="1200" y1="10" x2="1200" y2="170"/>
+          </g>
+          <path class="residual-env" id="residual-env-upper" d=""/>
+          <path class="residual-env" id="residual-env-lower" d=""/>
+          <defs>
+            <path id="residual-trace" pathLength="1000" d="M0 23.1 L8 28.6 L16 36.1 L24 45.2 L32 55.1 L40 65.4 L48 75.4 L56 84.8 L64 93.2 L72 100.2 L80 105.8 L88 110 L96 112.8 L104 114.5 L112 115.3 L120 115.4 L128 115 L136 114.5 L144 114 L152 113.6 L160 113.4 L168 113.2 L176 113.1 L184 112.8 L192 112.3 L200 111.3 L208 109.7 L216 107.4 L224 104.3 L232 100.3 L240 95.7 L248 90.5 L256 84.9 L264 79.2 L272 73.6 L280 68.5 L288 64.1 L296 60.7 L304 58.5 L312 57.5 L320 57.9 L328 59.6 L336 62.5 L344 66.5 L352 71.3 L360 76.6 L368 82.1 L376 87.7 L384 92.9 L392 97.6 L400 101.6 L408 104.8 L416 107 L424 108.3 L432 108.8 L440 108.5 L448 107.6 L456 106.2 L464 104.5 L472 102.7 L480 100.8 L488 99 L496 97.4 L504 96 L512 94.7 L520 93.7 L528 92.7 L536 91.9 L544 91 L552 90 L560 88.9 L568 87.6 L576 86.3 L584 84.7 L592 83.2 L600 81.6 L608 80.1 L616 78.8 L624 77.9 L632 77.2 L640 77.1 L648 77.4 L656 78.2 L664 79.6 L672 81.3 L680 83.5 L688 85.9 L696 88.4 L704 91 L712 93.5 L720 95.7 L728 97.6 L736 99.1 L744 100.2 L752 100.7 L760 100.8 L768 100.5 L776 99.7 L784 98.6 L792 97.4 L800 95.9 L808 94.4 L816 93 L824 91.6 L832 90.4 L840 89.4 L848 88.6 L856 87.9 L864 87.5 L872 87.1 L880 86.9 L888 86.8 L896 86.7 L904 86.6 L912 86.4 L920 86.3 L928 86.2 L936 86 L944 85.9 L952 85.8 L960 85.7 L968 85.8 L976 86.1 L984 86.4 L992 86.9 L1000 87.6 L1008 88.4 L1016 89.4 L1024 90.3 L1032 91.3 L1040 92.3 L1048 93.2 L1056 94 L1064 94.6 L1072 95.1 L1080 95.3 L1088 95.2 L1096 95 L1104 94.6 L1112 94 L1120 93.2 L1128 92.4 L1136 91.6 L1144 90.7 L1152 89.9 L1160 89.2 L1168 88.6 L1176 88.1 L1184 87.7 L1192 87.5 L1200 87.4"/>
+            <path id="residual-echo-a" pathLength="1000" d=""/>
+            <path id="residual-echo-b" pathLength="1000" d=""/>
+          </defs>
+          <use class="residual-echo residual-echo-a" href="#residual-echo-a" opacity="0.36"/>
+          <use class="residual-echo residual-echo-b" href="#residual-echo-b" opacity="0.2"/>
+          <use class="residual-ghost" href="#residual-trace" transform="translate(0 90) scale(1 1.06) translate(0 -90)" opacity="0.18"/>
+          <use class="residual-main" href="#residual-trace" opacity="0.98"/>
+          <use class="residual-ghost" href="#residual-trace" transform="translate(0 90) scale(1 0.94) translate(0 -90)" opacity="0.18"/>
+          <circle class="residual-node" cx="0" cy="26" r="3"/>
+        </svg>
+        <span class="residual-empty" aria-hidden="true">
+          <b>尚无振动记录</b>
+          <i>先起振一次，停下来的四秒会写在这里</i>
+        </span>
+        <span class="residual-mark residual-mark-start">T + 0</span>
+        <span class="residual-mark residual-mark-mid residual-mark-m1">T + 1 S</span>
+        <span class="residual-mark residual-mark-mid residual-mark-m2">T + 2 S</span>
+        <span class="residual-mark residual-mark-mid residual-mark-m3">T + 3 S</span>
+        <span class="residual-mark residual-mark-end">T + 4 S</span>
+        <span class="residual-cursor" aria-hidden="true">
+          <i class="residual-cursor-line"></i>
+          <i class="residual-cursor-dot"></i>
+          <b class="residual-cursor-readout" id="residual-readout">T+0.0 S / AMP 0.00</b>
+        </span>
+        <span class="sr-only" id="residual-live" aria-live="polite"></span>
+      </div>
+      <div class="afterglow-bottom">
+        <div class="afterglow-copy">
+          <p>每一次振动都会留下形状。频率被记录在轮廓里，声音停下<span class="nowrap">之后</span>，图形继续说明它曾经存在。</p>
+          <p class="scene-message" data-scene-message></p>
+        </div>
+        <div class="afterglow-controls">
+          <span class="scene-state" data-scene-state>静默待机</span>
+          <div class="afterglow-actions">
+            <button class="button button-primary" id="restart-button" type="button">回到首幕演奏</button>
+            <button class="button button-quiet" data-scene-toggle type="button" aria-busy="false">在这里演奏</button>
+            <button class="button button-text" id="silence-button" type="button">回到静默</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>RESONANCE / ORIGINAL BROWSER INSTRUMENT</span>
+    <span class="footer-swatch" aria-hidden="true"><i class="swatch-cobalt"></i> COBALT 268° <i class="swatch-vermilion"></i> VERMILION 29°</span>
+    <span>CANVAS × WEB AUDIO × 2026</span>
+  </footer>
+
+  <script src="resonance-engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
