@@ -352,8 +352,10 @@
     if (record === null) {
       residualResidue.textContent = 'RESIDUE / —';
     } else {
-      // Honest label: the share of amplitude still left at the end of the 4 s window.
-      residualResidue.textContent = `RESIDUE / ${Math.round(Math.exp(-rate) * 100)}%`;
+      // Honest label: the share of the promised range the trace still occupies at the
+      // end of the 4 s window. It carries `recordedSwing` because the envelope it is
+      // measured against is the range the record filled, not the range it could fill.
+      residualResidue.textContent = `RESIDUE / ${Math.round(Math.exp(-rate) * recordedSwing * 100)}%`;
     }
     if (residualLine.classList.contains('is-reading')) showResidualCursor(residualT, false);
     const nextLabel = pendingStart ? '取消启动' : state.isPlaying ? '暂停共振' : '启动共振';
