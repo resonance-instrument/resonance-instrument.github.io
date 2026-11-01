@@ -1528,8 +1528,9 @@ html[data-record="empty"] .residual-empty {
 
 /* The decay record writes itself in when a new recording takes the stage. Print
    and reduced motion skip the rule entirely, so the finished trace is what ships.
-   data-residual="draw" is set only on entry with a changed recording, so scrolling
-   back into the same record shows the finished trace instead of redrawing it. */
+   data-residual="draw" is set when the recording changes — a new tuning or a new
+   height at the same tuning — so scrolling back into the same record shows the
+   finished trace instead of redrawing it. */
 @media screen and (prefers-reduced-motion: no-preference) {
   html[data-scene="afterglow"][data-residual="draw"] .residual-line use {
     stroke-dasharray: 1000 1000;

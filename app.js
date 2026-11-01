@@ -30,6 +30,8 @@
   const residualDecay = document.querySelector('#residual-decay');
   const residualResidue = document.querySelector('#residual-residue');
   const residualTraces = document.querySelector('#residual-traces');
+  const residualPeak = document.querySelector('#residual-peak');
+  const residualNode = document.querySelector('.residual-node');
   const residualEnvUpper = document.querySelector('#residual-env-upper');
   const residualEnvLower = document.querySelector('#residual-env-lower');
   const residualExplain = document.querySelector('#residual-explain-note');
@@ -48,8 +50,8 @@
   const decayRates = { 42: 2.6, 96: 3.2, 180: 4.0 };
   // The explain line speaks in the tense of the record: future while the plot is
   // still waiting for a first vibration, past once one has been written.
-  const EXPLAIN_WRITTEN = '这条线记录最近一次振动：<span class="nowrap">横轴</span>是声音停下后的四秒，<span class="nowrap">纵轴</span>是它残留的振幅；指针或方向键可读取任意时刻。';
-  const EXPLAIN_EMPTY = '这里还没有记录。<span class="nowrap">起振一次</span>，声音停下后的四秒会写在这条轴上，<span class="nowrap">纵轴</span>是它残留的振幅；虚线是它将占满的范围。';
+  const EXPLAIN_WRITTEN = '这条线记录最近一次振动：<span class="nowrap">横轴</span>是停手后的四秒，<span class="nowrap">纵轴</span>是残留的振幅，<span class="nowrap">高度即力度</span>；指针或方向键可读任意时刻。';
+  const EXPLAIN_EMPTY = '这里还没有记录。<span class="nowrap">起振一次</span>，停手后的四秒会写在这条轴上，<span class="nowrap">纵轴</span>是残留的振幅；虚线是它的上限。';
 
   function smoothPath(vertices) {
     const fixed = (value) => value.toFixed(2);
@@ -68,7 +70,10 @@
     return d;
   }
 
-  function residualPath(frequency) {
+  // The record is measured, not composed: 64 units is the range the dashed
+  // envelope promises, and `swing` is how much of that range the vibration that
+  // stopped actually filled. 1.00 reproduces the full envelope.
+  function residualPath(frequency, swing = 1) {
     const cycles = decayCycles[frequency] || decayCycles[96];
     const rate = decayRates[frequency] || decayRates[96];
     const steps = frequency >= 180 ? 200 : 140;
@@ -77,7 +82,7 @@
       const t = index / steps;
       const decay = Math.exp(-rate * t);
       const x = 1200 * t;
-      const y = 90 - Math.cos(t * TAU * cycles + 0.08) * 64 * decay;
+      const y = 90 - Math.cos(t * TAU * cycles + 0.08) * 64 * swing * decay;
       vertices.push([x, y]);
     }
     return smoothPath(vertices);
@@ -111,7 +116,9 @@
     const cycles = decayCycles[target] || decayCycles[96];
     const rate = decayRates[target] || decayRates[96];
     const decay = Math.exp(-rate * t);
-    const swing = Math.cos(t * TAU * cycles + 0.08) * decay;
+    // The readout quotes the same fraction of the promised range that the drawn
+    // trace is standing at, so a soft record never reads as a full one.
+    const swing = Math.cos(t * TAU * cycles + 0.08) * decay * recordedSwing;
     return { swing, y: 90 - swing * 64 };
   }
 
@@ -188,13 +195,52 @@
   let lifecycle = 'idle';
   let pendingStart = false;
   let suppressAfterglowPause = false;
-  // Frequency of the decay record the write-on last drew; the stroke replays only
-  // when the recording itself changed, not on every scroll back into the act.
-  let drawnResidualFrequency = null;
+  // Which record the write-on last drew: tuning plus the height that tuning was
+  // stopped at. The stroke replays when either changed, not on every scroll back
+  // into the act.
+  let drawnResidualToken = null;
   // Tuning of the vibration that actually happened: frozen at the strike, moved by
   // a retune only while live. Null until the instrument has vibrated once, which is
   // what separates an honest empty plot from a curve nothing produced.
   let recordedFrequency = null;
+  // Share of the promised range the recorded vibration filled, written when its
+  // sound stops. 1 until then: before a stop has happened the plot shows the range
+  // itself, not a height nothing earned.
+  let recordedSwing = 1;
+
+  // How hard the instrument was played, as a fraction of how hard it can be
+  // played: the highest the field reached during the vibration, divided by the
+  // peak the same tuning can reach at full tension with the pointer on its crest.
+  // reliefAt is linear in amplitude, so dividing one peak by another cancels the
+  // scene's own fade: scrolling into act 3 cannot change the reading, only the
+  // hand can. Measured at 96 Hz: the resting field 0.52, full tension alone 0.75,
+  // full tension with the pointer pressed on the crest 1.00.
+  function swingOf(snapshot) {
+    if (!snapshot || !R || !R.reliefAt) return 1;
+    const peakOf = (sample) => {
+      let highest = 0;
+      for (let index = 0; index <= 160; index++) {
+        highest = Math.max(highest, Math.abs(R.reliefAt(sample, index / 160)));
+      }
+      return highest;
+    };
+    const ceiling = peakOf({ ...snapshot, resonance: 1, probeX: 0.47, probeStrength: 1 });
+    if (!(ceiling > 0)) return 1;
+    return Math.min(1, Math.max(0, peakOf(snapshot) / ceiling));
+  }
+
+  // The best reading of the vibration running right now. Sampling keeps following
+  // it because a hand that lets go of the terrain before the sound stops has still
+  // played harder than the resting field it ends on.
+  let livePeak = 1;
+  let peakSampleAt = 0;
+  function observePeak(now = performance.now(), force = false) {
+    if (!state || !state.isPlaying) return;
+    if (!force && now - peakSampleAt < 90) return;
+    peakSampleAt = now;
+    const reading = swingOf(state);
+    if (reading > livePeak) livePeak = reading;
+  }
   // Which record state the interface last applied; null forces the first
   // syncInterface to write the empty-state copy into the explain line.
   let appliedRecordState = null;
@@ -241,6 +287,16 @@
     return '静默待机';
   }
 
+  // Writing the same value back would not restart the stroke, so the gate drops,
+  // the style is flushed, and the trace draws itself in again at its new height.
+  // A scene entry lands here too, one frame into the first stroke, which is early
+  // enough that it reads as the stroke starting rather than as a second one.
+  function replayResidualStroke() {
+    root.dataset.residual = 'settled';
+    residualLine.getBoundingClientRect();
+    root.dataset.residual = 'draw';
+  }
+
   function syncInterface(message) {
     if (!state || !audio) return;
     const audioState = audio.getState();
@@ -250,18 +306,22 @@
     // tuning it was written at.
     const record = recordedFrequency;
     const recordState = record === null ? 'empty' : 'written';
+    const recordToken = record === null ? null : `${record}/${recordedSwing.toFixed(3)}`;
     if (recordState !== appliedRecordState) {
       appliedRecordState = recordState;
       root.dataset.record = recordState;
       residualExplain.innerHTML = record === null ? EXPLAIN_EMPTY : EXPLAIN_WRITTEN;
-      if (record === null) {
-        hideResidualCursor();
-      } else if (root.dataset.scene === 'afterglow') {
-        // The record arrived while the act was on screen: write it in now instead
-        // of waiting for the next scene entry.
-        root.dataset.residual = 'draw';
-        drawnResidualFrequency = record;
-      }
+      if (record === null) hideResidualCursor();
+    }
+    // A record whose shape changed while the act was on screen writes itself in
+    // rather than swapping under the reader's eye: that is what happens when the
+    // sound stops and the height the hand earned gets written down. Changing it
+    // in another act leaves the token unconsumed, so the next entry draws it in.
+    if (recordToken === null) {
+      drawnResidualToken = null;
+    } else if (recordToken !== drawnResidualToken && root.dataset.scene === 'afterglow') {
+      drawnResidualToken = recordToken;
+      replayResidualStroke();
     }
     const recordFreq = record === null ? target : record;
     root.dataset.playing = String(state.isPlaying);
@@ -273,15 +333,22 @@
     afterglowFrequency.textContent = record === null ? '--- / Hz' : `${padded} / Hz`;
     axisFrequency.textContent = String(target).padStart(3, '0');
     frequencyAxis.style.setProperty('--freq-pos', `${(target / 200) * 100}%`);
-    residualTrace.setAttribute('d', residualPath(recordFreq));
+    residualTrace.setAttribute('d', residualPath(recordFreq, recordedSwing));
     const echoes = Object.keys(decayCycles).map(Number).filter((frequency) => frequency !== recordFreq);
-    residualEchoA.setAttribute('d', residualPath(echoes[0]));
-    residualEchoB.setAttribute('d', residualPath(echoes[1]));
+    residualEchoA.setAttribute('d', residualPath(echoes[0], recordedSwing));
+    residualEchoB.setAttribute('d', residualPath(echoes[1], recordedSwing));
     const rate = decayRates[recordFreq] || decayRates[96];
     residualEnvUpper.setAttribute('d', residualEnvelope(rate, -1));
     residualEnvLower.setAttribute('d', residualEnvelope(rate, 1));
+    // The T+0 marker rides the crest of the record it labels, not a fixed height.
+    residualNode.setAttribute('cy', residualPoint(0).y.toFixed(1));
     residualDecay.textContent = `DECAY / ${rate.toFixed(1)}`;
     residualTraces.textContent = record === null ? 'TRACES / 00' : 'TRACES / 03';
+    // Measured when the sound stops; while still ringing the height is not known
+    // yet, so the label keeps the dash it uses for an unmeasured record.
+    residualPeak.textContent = record === null || state.isPlaying
+      ? 'PEAK / —'
+      : `PEAK / ${recordedSwing.toFixed(2)}`;
     if (record === null) {
       residualResidue.textContent = 'RESIDUE / —';
     } else {
@@ -348,6 +415,9 @@
     if (next !== state) {
       state = next;
       render();
+      // rAF timestamps share the performance.now() clock, so the sample can be
+      // throttled against the same timer.
+      if (state.isPlaying) observePeak(time);
     }
     if (!state.reducedMotion && (state.isPlaying || state.frequency !== state.targetFrequency || state.amplitude !== amplitudeGoal())) {
       frame = requestAnimationFrame(tick);
@@ -412,6 +482,10 @@
         lifecycle = 'live';
         state = { ...state, isPlaying: true };
         recordedFrequency = state.targetFrequency;
+        // A new vibration starts its own tally, and the record is the range itself
+        // until the stop writes down the height this one actually reached.
+        livePeak = swingOf(state);
+        recordedSwing = 1;
         strikeAt = performance.now();
         syncInterface(audio.getState().muted ? '已静音，画面继续振动。' : '声音已接入，指针、指尖或方向键可改变张力。');
         startLoop();
@@ -461,6 +535,9 @@
     if (!state.isPlaying && lifecycle !== 'starting') return;
     intentVersion++;
     pendingStart = false;
+    // The record is written from what the vibration reached, measured before
+    // reduced motion flattens the field back to rest.
+    if (state.isPlaying) recordedSwing = livePeak;
     if (state.reducedMotion && autoTension) {
       state = R.setResonance(state, 0);
       syncTensionAria();
@@ -482,6 +559,8 @@
     state = R.setResonance(state, value);
     autoTension = false;
     syncTensionAria();
+    // A press is the loudest a player gets, and it can be over inside one frame.
+    observePeak(performance.now(), true);
     render();
   }
 
@@ -503,8 +582,12 @@
   function chooseFrequency(frequency) {
     state = R.setFrequency(state, frequency);
     audio.setFrequency(frequency);
-    // Retuning a live vibration continues it at the new pitch, so the record follows.
-    if (state.isPlaying) recordedFrequency = frequency;
+    // Retuning a live vibration continues it at the new pitch, so the record follows
+    // and waits for this stop to measure its height.
+    if (state.isPlaying) {
+      recordedFrequency = frequency;
+      recordedSwing = 1;
+    }
     if (state.reducedMotion) state = R.advanceState(state, 0);
     syncInterface();
     startLoop();
@@ -696,7 +779,11 @@
 
   function adoptScene(sceneId) {
     const previousScene = root.dataset.scene;
-    const record = recordedFrequency;
+    // Tuning plus height: two stops of the same tuning at different strengths are
+    // different recordings, and each deserves its own stroke.
+    const recordToken = recordedFrequency === null
+      ? null
+      : `${recordedFrequency}/${recordedSwing.toFixed(3)}`;
     if (previousScene !== sceneNames[sceneId]) {
       root.dataset.scene = sceneNames[sceneId];
       syncSceneNav(sceneId);
@@ -720,8 +807,8 @@
         // Entering with a new recording: let the trace write itself in. Re-entering
         // the same recording shows the finished trace instead of redrawing it. An
         // empty plot has nothing to draw.
-        root.dataset.residual = record === null || record === drawnResidualFrequency ? 'settled' : 'draw';
-        drawnResidualFrequency = record;
+        root.dataset.residual = recordToken === null || recordToken === drawnResidualToken ? 'settled' : 'draw';
+        drawnResidualToken = recordToken;
         considerAfterglowPause();
       } else if (sceneId === 'act-afterglow') {
         considerAfterglowPause();
